@@ -1,6 +1,6 @@
 from models.level import Level
 import sys
-sys.path.insert(1, '/home/runner/Yang/')
+sys.path.insert(1, '../')
 from firebase_admin import db
 from db.connection import DbConnection
 
