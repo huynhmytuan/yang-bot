@@ -82,7 +82,7 @@ class UserUtils:
       'users' : data,
       'last_backup' : time
       })
-  #Check backkup
+  #Check backup
   def last_backup(self):
     ref = db.reference(f"/users_backup/")
     response = ref.get()

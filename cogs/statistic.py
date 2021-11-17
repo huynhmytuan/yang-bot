@@ -80,41 +80,45 @@ class statistic(commands.Cog):
                     txt.write(element + "\n")
                 txt.close()
             with open('top_result.txt', "rb") as file:
-                await ctx.send("Đây là file thống kê của bạn nè nheee ",
-                               file=discord.File(file, 'top_result.txt'))
+                await ctx.send("Đây là file thống kê của bạn nè nheee ",file=discord.File(file, 'top_result.txt'))
 
     @commands.command(brief='Kết thúc học kì',
                       aliases=['e', 'end'],
                       description="Kết thúc một học kì và reset rank.")
-    async def end_semester(self, ctx):
-        await ctx.send('Thống Kê Kết Quả Học Tập Trong Học Kì...')
-        time.sleep(3)
-        await statistic.stats(self, ctx, "semester")
-        await ctx.send(
-            '**Đang tiến hành reset rank và thời gian học. Vui lòng đợi...**')
-        if ctx.message.channel == self.bot.get_channel(self.ADMIN_CHANNEL_ID):
-            members = self.guild.members
-            levels = self.level_utils.get_levels()
-            users = self.user_utils.get_users()
-            time
-            await statistic.backup(self, ctx)
-            for user in users:
-                if user.semester_learning != 0:
-                    for member in members:
-                        if member.id == user.user_id:
-                            # member.
-                            for role in levels:
-                                if role.id in [r.id for r in member.roles]:
-                                    # remove current role
-                                    cur_role = get(member.guild.roles,
-                                                   id=role.id)
-                                    await member.remove_roles(cur_role)
-                            user.semester_learning = 0
-                            user.current_level = -1
-                            break
-            self.user_utils.upload_users(users)
-        # Send respond message
-        await ctx.send('**Đã Kết Thúc Một học Kì**')
+    async def end_semester(self, ctx, confirm = None):
+        if confirm == None:
+            embed = discord.Embed(color= 0xf1fb3e, timestamp = datetime.datetime.utcnow() )
+            embed.add_field(name = '\u200b', value=f'Gõ **-end YES** để xác nhận khôi phục dữ liệu từ bản backup.',inline=False)
+            await ctx.send(embed=embed)
+        if confirm == "YES":
+            await ctx.send('Thống Kê Kết Quả Học Tập Trong Học Kì...')
+            time.sleep(3)
+            await statistic.stats(self, ctx, "semester")
+            await ctx.send('**Đang tiến hành reset rank và thời gian học. Vui lòng đợi...**')
+            if ctx.message.channel == self.bot.get_channel(self.ADMIN_CHANNEL_ID):
+                members = self.guild.members
+                levels = self.level_utils.get_levels()
+                users = self.user_utils.get_users()
+                await statistic.backup(self, ctx)
+                for user in users:
+                    if user.semester_learning != 0:
+                        for member in members:
+                            if member.id == user.user_id:
+                                # member.
+                                for role in levels:
+                                    if role.id in [r.id for r in member.roles]:
+                                        # remove current role
+                                        cur_role = get(member.guild.roles,
+                                                    id=role.id)
+                                        await member.remove_roles(cur_role)
+                                user.semester_learning = 0
+                                user.current_level = -1
+                                break
+                self.user_utils.upload_users(users)
+            # Send respond message
+            await ctx.send('**Đã Kết Thúc Một học Kì**')
+        else:
+            await ctx.reply('Cú pháp không hợp lệ!')
 
     @commands.command(brief='Backup dữ liệu',
                       aliases=['b', 'bk'],
@@ -139,12 +143,17 @@ class statistic(commands.Cog):
     @commands.command(brief='Khôi phục dữ liệu',
                       aliases=['back', 'rb'],
                       description="Khôi phục dữ liệu")
-    async def roll_back(self, ctx):
+    async def roll_back(self, ctx, confirm = None):
         if ctx.message.channel == self.bot.get_channel(self.ADMIN_CHANNEL_ID):
-              self.user_utils.roll_back()
-              await ctx.send(
-                  'Khôi phục dữ liệu thành công!\nKiến nghị sử dụng lệnh "-update" để cập nhật lại rank của người dùng.'
-              )
+            if confirm == None:
+                embed = discord.Embed(color= 0xf1fb3e, timestamp = datetime.datetime.utcnow() )
+                embed.add_field(name = '\u200b', value=f'Gõ **-roll_back YES** để xác nhận khôi phục dữ liệu từ bản backup.',inline=False)
+                await ctx.send(embed=embed)
+            if confirm == "YES":
+                self.user_utils.roll_back()
+                await ctx.send('Khôi phục dữ liệu thành công!\nKiến nghị sử dụng lệnh "-update" để cập nhật lại rank của người dùng.')
+            else:
+                await ctx.send('Cú pháp không hợp lệ!')
 
 def setup(bot):
     bot.add_cog(statistic(bot))

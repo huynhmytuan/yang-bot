@@ -155,7 +155,7 @@ class tracking(commands.Cog):
         text = "\n".join(value)
         embed = discord.Embed(color=0x002aff, timestamp = datetime.datetime.utcnow())
         date_join = member.joined_at.strftime("%H:%M, Ngày %#d/%m/%Y")
-        embed.add_field(name=f'``` BẢNG THỐNG KÊ CÁ NHÂN ```',value=f"\n**Thành Viên:** {member.mention}\n ```CS\n{text}\n\nNgày gia nhập: \n{date_join} ```\nGõ -help để xem tất cả các lệnh được hỗ trợ.",inline=False )
+        embed.add_field(name=f'``` BẢNG THỐNG KÊ CÁ NHÂN ```',value=f"\u200b \n**Thành Viên:** {member.mention}\n ```CS\n{text}\n\nNgày gia nhập: \n{date_join} ```\nGõ -help để xem tất cả các lệnh được hỗ trợ.",inline=False )
         embed.set_footer(text=f'Người dùng {member.name}',icon_url=member.avatar_url)
         await ctx.send(embed=embed)
 
@@ -181,7 +181,7 @@ class tracking(commands.Cog):
       role_rank = 0
       #=====Semester_learning Time
       method_semes = levels[0].end - user.semester_learning
-      achive_semes = time_readable(method_semes)
+      achieve_semes = time_readable(method_semes)
     for i in range(len(levels)):
       #user have highest level
       if high_rank == levels[i].order:
@@ -190,7 +190,7 @@ class tracking(commands.Cog):
         cur_level = get(self.guild.roles, id=levels[len(levels)-1].id).mention
         next_level = "Sắp Ra Mắt!"
         role_rank = len(levels)
-        achive_semes = "Số giờ của bạn đã đạt tối đa"
+        achieve_semes = "Số giờ của bạn đã đạt tối đa"
 
       elif uLv == levels[i].order:
         cur_level = get(self.guild.roles, id=levels[i].id).mention
@@ -198,10 +198,10 @@ class tracking(commands.Cog):
         role_rank = levels[i].order+1
         #=====Semester_learning Time
         method_semes = levels[i].end - user.semester_learning
-        achive_semes = time_readable(method_semes)
+        achieve_semes = time_readable(method_semes)
 
     embed = discord.Embed(title ="🌟BẢNG THÀNH TÍCH", color=member.color, timestamp = datetime.datetime.utcnow())
-    embed.add_field(name="\u200b", value=f"*Thành tích được tính theo học kỳ (2 tháng)* \n **Thành tích hiện tại:** {cur_level}\n **Thành tích tiếp theo:** {next_level}\n\n ***Xếp hạng thành tích:***  ``👑{role_rank}/{len(levels)}``\n__Đạt thành tích tiếp theo còn cần__  ``⏰{achive_semes}``\n------------\n **Thành tích cao nhất đạt được:**\n  {hr} \n Gõ -help để xem tất cả các lệnh được hỗ trợ.",inline=False) 
+    embed.add_field(name="\u200b", value=f"*Thành tích được tính theo học kỳ (2 tháng)* \n **Thành tích hiện tại:** {cur_level}\n **Thành tích tiếp theo:** {next_level}\n\n ***Xếp hạng thành tích:***  ``👑{role_rank}/{len(levels)}``\n__Đạt thành tích tiếp theo còn cần__  ``⏰{achieve_semes}``\n------------\n **Thành tích cao nhất đạt được:**\n  {hr} \n Gõ -help để xem tất cả các lệnh được hỗ trợ.",inline=False) 
     embed.set_footer(text=f'Người dùng {member.name}',icon_url=member.avatar_url)
     await ctx.send(embed=embed)
 
