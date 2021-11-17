@@ -141,36 +141,45 @@ class leveling(commands.Cog):
 
   @commands.Cog.listener()
   async def on_member_join(self, member):
-    print(f"Member {member.name} ID: {member.id} join server")
-    leveling.check_and_add_user(self, member)
+    if not member.bot:
+      print(f"SERVER_LOG: Member {member.name} ID: {member.id} join server")
+      leveling.check_and_add_user(self, member)
 
   @commands.Cog.listener()
   async def on_voice_state_update(self, member, before, after):
-    if not before.channel and after.channel:
-      after_category_name = str.lower(after.channel.category.name)
-      if any(word in after_category_name for word in self.categories):
-        await leveling.add_study_role(self, member)
-  #==================================================
-    if before.channel and after.channel:
-      before_name = str.lower(before.channel.category.name)
-      after_name = str.lower(after.channel.category.name)
-      if any(word in before_name for word in self.categories) and any(word in after_name for word in self.categories):
-        if member.voice.self_video or member.voice.self_stream:
-            leveling.startLearning(self, member)
-        elif not member.voice.self_video and not member.voice.self_stream:
+    if not member.bot:
+      #Connect to Study Room
+      if not before.channel and after.channel: 
+        after_category_name = str.lower(after.channel.category.name)
+        if any(word in after_category_name for word in self.categories):
+          await leveling.add_study_role(self, member)
+      #==================================================
+      if before.channel and after.channel:
+        before_name = str.lower(before.channel.category.name)
+        after_name = str.lower(after.channel.category.name)
+        # Move from non-study to Study Room
+        if not any(word in before_name for word in self.categories) and any(word in after_name for word in self.categories):
+          await leveling.add_study_role(self, member)
+        #Check video in study room
+        if any(word in before_name for word in self.categories) and any(word in after_name for word in self.categories):
+          if member.voice.self_video or member.voice.self_stream:
+              leveling.startLearning(self, member)
+          elif not member.voice.self_video and not member.voice.self_stream:
+            leveling.endLearning(self, member)
+            #Check and add new role
+            await leveling.add_role(self, member)
+        #Move to non-study room
+        elif any(word in before_name for word in self.categories) and not any(word in after_name for word in self.categories):
           leveling.endLearning(self, member)
-          #Check and add new role
           await leveling.add_role(self, member)
-      elif any(word in before_name for word in self.categories) and not any(word in after_name for word in self.categories):
-        leveling.endLearning(self, member)
-        await leveling.add_role(self, member)
-        await leveling.remove_study_role(self, member)
-    elif before.channel and not after.channel:
-      before_name = str.lower(before.channel.category.name)
-      if any(word in before_name for word in self.categories):
-        leveling.endLearning(self, member)
-        await leveling.add_role(self, member)
-        await leveling.remove_study_role(self, member)
+          await leveling.remove_study_role(self, member)
+      elif before.channel and not after.channel:
+        before_name = str.lower(before.channel.category.name)
+        #Quit study room
+        if any(word in before_name for word in self.categories):
+          leveling.endLearning(self, member)
+          await leveling.add_role(self, member)
+          await leveling.remove_study_role(self, member)
      
   @commands.command(brief='Cập nhật lại role cho người dùng', description = "Hiển thị")
   async def update(self, ctx):

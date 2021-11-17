@@ -155,7 +155,7 @@ class tracking(commands.Cog):
         text = "\n".join(value)
         embed = discord.Embed(color=0x002aff, timestamp = datetime.datetime.utcnow())
         date_join = member.joined_at.strftime("%H:%M, Ngày %#d/%m/%Y")
-        embed.add_field(name=f'``` BẢNG THỐNG KÊ CÁ NHÂN ```',value=f"---\n  **Thành Viên:** {member.mention}\n ```CS\n{text}\n\nNgày gia nhập: \n{date_join} ```\nGõ -help để xem tất cả các lệnh được hỗ trợ.",inline=False )
+        embed.add_field(name=f'``` BẢNG THỐNG KÊ CÁ NHÂN ```',value=f"\n**Thành Viên:** {member.mention}\n ```CS\n{text}\n\nNgày gia nhập: \n{date_join} ```\nGõ -help để xem tất cả các lệnh được hỗ trợ.",inline=False )
         embed.set_footer(text=f'Người dùng {member.name}',icon_url=member.avatar_url)
         await ctx.send(embed=embed)
 

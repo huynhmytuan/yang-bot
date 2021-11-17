@@ -21,7 +21,7 @@ class statistic(commands.Cog):
         self.user_utils = UserUtils()
         self.level_utils = LevelUtils()
 
-    @commands.command(brief='Xuất bảng xếp theo yêu cầu.',
+    @commands.command(brief='Xuất bảng xếp hạng theo yêu cầu.',
                       aliases=['s', 'st'],
                       description="Hiển thị")
     async def stats(self, ctx, top_type: str = "semester"):

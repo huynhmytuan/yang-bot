@@ -21,9 +21,16 @@ exten = ["cogs.leveling","cogs.tracking","cogs.statistic", "cogs.message"]
 async def help(ctx):
   await ctx.channel.purge(limit=1)
   embed=discord.Embed(title="Help", description="Gõ -help <lệnh> để xem thêm thông tin mô tả chi tiết", color=0x00ada2)
-  embed.add_field(name="-me", value="Xem bảng thống kê cá nhân", inline=False)
-  embed.add_field(name="-top", value="Xem bảng xếp hạng", inline=False)
-  embed.add_field(name="-p", value="Xem bảng thành tích", inline=False)
+  if ctx.message.channel.id == ADMIN_CHANNEL_ID:
+    embed.add_field(name="-cd", value="Khởi tạo dữ liệu học cho toàn bộ người dùng.", inline=False)
+    embed.add_field(name="-bk", value="Backup cơ sở dữ liệu.", inline=False)
+    embed.add_field(name="-check", value="Kiểm tra bản sao lưu gần nhất.", inline=False)
+    embed.add_field(name="-stats", value="Xuất bản thống kê theo xếp hạng", inline=False)
+    embed.add_field(name="-end", value="Kết thúc học kì.", inline=False)
+  else:
+    embed.add_field(name="-me", value="Xem bảng thống kê cá nhân", inline=False)
+    embed.add_field(name="-top", value="Xem bảng xếp hạng", inline=False)
+    embed.add_field(name="-p", value="Xem bảng thành tích", inline=False)
   await ctx.send(embed=embed, delete_after=10)
 @help.command()
 async def me(ctx):
