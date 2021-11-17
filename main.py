@@ -15,7 +15,7 @@ bot.remove_command("help")
 
 # -------------Get contants key--------------
 TOKEN = os.getenv('TOKEN')
-exten = ["cogs.leveling","cogs.tracking","cogs.statistic", "cogs.message"]
+exten = ["cogs.leveling","cogs.tracking","cogs.statistic"]
 # --------------Custom Help commands ---------------
 @bot.group(invoke_without_command=True)
 async def help(ctx):
