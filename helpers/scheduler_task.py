@@ -17,8 +17,7 @@ async def reset_day():
       if user.day_learning != 0:
         user.day_learning = 0
     user_utils.upload_users(users)
-    with open("log.txt", "a") as file_object:
-      file_object.write(f"\n'=============Daily reset!============='")        
+    print(f"\n'=============Daily reset!============='")        
 # Weekly at 00:06 on monday of week
 @aiocron.crontab('4 0 * * MON', start=False)
 async def reset_week():
@@ -29,8 +28,7 @@ async def reset_week():
     if user.week_learning != 0:
       user.week_learning = 0
   user_utils.upload_users(users)
-  with open("log.txt", "a") as file_object:
-    file_object.write(f"\n=============Weekly reset!=============")      
+  print(f"\n=============Weekly reset!=============")      
 
 
 # Monthly at 00:10 on day 1 of month
@@ -42,8 +40,7 @@ async def reset_month():
       if user.month_learning != 0:
         user.month_learning = 0
     user_utils.upload_users(users)
-    with open("log.txt", "a") as file_object:
-      file_object.write(f"\n'=============Monthly reset!============='") 
+    print(f"\n'=============Monthly reset!============='") 
 
 def Run_Scheduler():
     reset_day.start()

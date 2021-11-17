@@ -63,24 +63,21 @@ class leveling(commands.Cog):
     for user in users:
       if  user.user_id == leave_user.id:
         self.user_utils.delete_by_id(user.user_id)
-        print('Đã xóa')
         break
   async def add_study_role(self, member):
     member_roles = member.roles
     if STUDY_ROLE_ID not in [role.id for role in member_roles]:
-      print('Add Role ne')
       study_role = get(member.guild.roles, id=STUDY_ROLE_ID)
       await member.add_roles(study_role)
     else:
-      print('Khong tim thay')
+      pass
   async def remove_study_role(self, member):
     member_roles = member.roles
     if STUDY_ROLE_ID in [role.id for role in member_roles]:
-      print('Add Role ne')
       study_role = get(member.guild.roles, id=STUDY_ROLE_ID)
       await member.remove_roles(study_role)
     else:
-      print('Khong tim thay')
+      pass
   async def add_role(self, member):
     levels = []
     member_roles = member.roles
@@ -91,10 +88,10 @@ class leveling(commands.Cog):
       #Get Current Time Level
       if semester_time >= level.mark and semester_time < level.end:
         if level.id in [role.id for role in member_roles]:
-          print('+ Nothing Update!')
+          pass
         else:
           user.current_level = level.order
-          print('+ New role has been added: ',level.name)
+          print(f'ROLE_UPDATE: {member.name} role has been added:',level.name)
           if user.highest_rank < level.order:
             user.highest_rank = level.order
           new_role = get(member.guild.roles, id=level.id)
@@ -104,29 +101,24 @@ class leveling(commands.Cog):
           #remove current role
         cur_role = get(member.guild.roles, id=level.id)
         await member.remove_roles(cur_role)
-        print('+ The old role has been removed: ',level.name)
     self.user_utils.update_user(user)
 
   def startLearning(self, member):
-    print(f"{member.name} start learning section!")
     user = self.user_utils.get_user_by_id(member.id)
     if not user: 
       leveling.check_and_add_user(self, member)
       user = self.user_utils.get_user_by_id(member.id)
     if member.id == user.user_id:
       if user.join_time != 0:
-        print(f"{member.name} are still learning!")
         return
       user.join_time = time.time()
       # break
     self.user_utils.update_user(user)
 
   def endLearning(self, member):
-    print(f"{member.name} end learning section!")
     user = self.user_utils.get_user_by_id(member.id)
     if member.id == user.user_id:
       if user.join_time == 0:
-        print(f"{member.name} not learned")
         return 
       #calculate section learn time:
       now = time.time()
@@ -135,11 +127,9 @@ class leveling(commands.Cog):
         user.join_time = 0
         self.user_utils.update_user(user)
         return
-      with open("log.txt", "a") as file_object:
-        # Append 'hello' at the end of file
-        join = time.localtime(user.join_time)
-        end = time.localtime(now)
-        file_object.write(f"\nThành viên: {member.name} ID: {member.id} | Bắt đầu học: {time.strftime('%H:%M, %#d/%m/%Y', join)} | Kết thúc: {time.strftime('%H:%M, %#d/%m/%Y', end)} | Thời gian đã học: {time_readable(learn_time)}| Thời gian trước: {user.learning_time}")         
+      join = time.localtime(user.join_time)
+      end = time.localtime(now)
+      print(f"\nLEARNING_LOG: {member.name} | ID: {member.id} | Start: {time.strftime('%H:%M, %#d/%m/%Y', join)} | End: {time.strftime('%H:%M, %#d/%m/%Y', end)} | Time: {time_readable(learn_time)}| Before: {user.learning_time}")
       #Update total learning time
       user.learning_time += learn_time
       user.day_learning += learn_time
@@ -166,26 +156,18 @@ class leveling(commands.Cog):
       after_name = str.lower(after.channel.category.name)
       if any(word in before_name for word in self.categories) and any(word in after_name for word in self.categories):
         if member.voice.self_video or member.voice.self_stream:
-            print("-----------------------------")
-            print("Video Onl")
             leveling.startLearning(self, member)
         elif not member.voice.self_video and not member.voice.self_stream:
-          print("-----------------------------")
-          print("Video Off")
           leveling.endLearning(self, member)
           #Check and add new role
           await leveling.add_role(self, member)
       elif any(word in before_name for word in self.categories) and not any(word in after_name for word in self.categories):
-        print("-----------------------------")
-        print("Quit Study Room")
         leveling.endLearning(self, member)
         await leveling.add_role(self, member)
         await leveling.remove_study_role(self, member)
     elif before.channel and not after.channel:
       before_name = str.lower(before.channel.category.name)
       if any(word in before_name for word in self.categories):
-        print("-----------------------------")
-        print("Quit Study Room")
         leveling.endLearning(self, member)
         await leveling.add_role(self, member)
         await leveling.remove_study_role(self, member)
@@ -215,7 +197,6 @@ class leveling(commands.Cog):
                   new_role = get(member.guild.roles, id=levels[i].id)
                   await member.add_roles(new_role)
                   user.current_level = levels[i].order
-                  print('+ New role has been added: ',levels[i].name)
                   #=====High Rank=======
                   if user.highest_rank < levels[i].order:
                     user.highest_rank = levels[i].order
@@ -224,7 +205,6 @@ class leveling(commands.Cog):
                 #remove current role
                 cur_role = get(member.guild.roles, id=levels[i].id)
                 await member.remove_roles(cur_role)
-                print('+ The old role has been removed: ',levels[i].name)
         #Save datebase
         self.user_utils.update_user(user)
     await ctx.send('Đã cập nhật xong.')

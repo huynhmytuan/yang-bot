@@ -12,4 +12,4 @@ class DbConnection:
         "databaseURL" : DATABASE_URL,
         'storageBucket': STORAGE_URL
       })
-      print("Database is connected.")
+      print("CODE_LOG: Database is connected.")

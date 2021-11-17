@@ -13,7 +13,6 @@ class LevelUtils:
     respone = ref.get()
     levels = []
     if not respone:
-      print("Du lieu khong the lay")
       return levels
     for level in respone:
       levels.append(Level(**level))
