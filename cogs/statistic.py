@@ -88,7 +88,7 @@ class statistic(commands.Cog):
     async def end_semester(self, ctx, confirm = None):
         if confirm == None:
             embed = discord.Embed(color= 0xf1fb3e, timestamp = datetime.datetime.utcnow() )
-            embed.add_field(name = '\u200b', value=f'Gõ **-end YES** để xác nhận khôi phục dữ liệu từ bản backup.',inline=False)
+            embed.add_field(name = 'XÁC NHẬN', value=f'Gõ **-end YES** để xác nhận khôi phục dữ liệu từ bản backup.',inline=False)
             await ctx.send(embed=embed)
         if confirm == "YES":
             await ctx.send('Thống Kê Kết Quả Học Tập Trong Học Kì...')
@@ -118,7 +118,9 @@ class statistic(commands.Cog):
             # Send respond message
             await ctx.send('**Đã Kết Thúc Một học Kì**')
         else:
-            await ctx.reply('Cú pháp không hợp lệ!')
+            embed = discord.Embed(color= 0xf44336, timestamp = datetime.datetime.utcnow() )
+            embed.add_field(name = 'LỖI CÚ PHÁP', value=f'Cú pháp không hợp lệ',inline=False)
+            await ctx.send(embed=embed)
 
     @commands.command(brief='Backup dữ liệu',
                       aliases=['b', 'bk'],
@@ -147,13 +149,15 @@ class statistic(commands.Cog):
         if ctx.message.channel == self.bot.get_channel(self.ADMIN_CHANNEL_ID):
             if confirm == None:
                 embed = discord.Embed(color= 0xf1fb3e, timestamp = datetime.datetime.utcnow() )
-                embed.add_field(name = '\u200b', value=f'Gõ **-roll_back YES** để xác nhận khôi phục dữ liệu từ bản backup.',inline=False)
+                embed.add_field(name = 'XÁC NHẬN', value=f'Gõ **-roll_back YES** để xác nhận khôi phục dữ liệu từ bản backup.',inline=False)
                 await ctx.send(embed=embed)
-            if confirm == "YES":
+            elif confirm == "YES":
                 self.user_utils.roll_back()
                 await ctx.send('Khôi phục dữ liệu thành công!\nKiến nghị sử dụng lệnh "-update" để cập nhật lại rank của người dùng.')
             else:
-                await ctx.send('Cú pháp không hợp lệ!')
+                embed = discord.Embed(color= 0xf44336, timestamp = datetime.datetime.utcnow() )
+                embed.add_field(name = 'LỖI CÚ PHÁP', value=f'Cú pháp không hợp lệ',inline=False)
+                await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(statistic(bot))
