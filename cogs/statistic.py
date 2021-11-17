@@ -90,7 +90,7 @@ class statistic(commands.Cog):
             embed = discord.Embed(color= 0xf1fb3e, timestamp = datetime.datetime.utcnow() )
             embed.add_field(name = 'XÁC NHẬN', value=f'Gõ **-end YES** để xác nhận khôi phục dữ liệu từ bản backup.',inline=False)
             await ctx.send(embed=embed)
-        if confirm == "YES":
+        elif confirm == "YES":
             await ctx.send('Thống Kê Kết Quả Học Tập Trong Học Kì...')
             time.sleep(3)
             await statistic.stats(self, ctx, "semester")
