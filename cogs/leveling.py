@@ -84,24 +84,28 @@ class leveling(commands.Cog):
     levels = self.level_utils.get_levels()
     user = self.user_utils.get_user_by_id(member.id)
     semester_time = user.semester_learning
-    for level in levels:
-      #Get Current Time Level
-      if semester_time >= level.mark and semester_time < level.end:
-        if level.id in [role.id for role in member_roles]:
-          pass
-        else:
-          user.current_level = level.order
-          print(f'ROLE_UPDATE: {member.name} role has been added:',level.name)
-          if user.highest_rank < level.order:
-            user.highest_rank = level.order
-          new_role = get(member.guild.roles, id=level.id)
-          await member.add_roles(new_role)
-        #====================================
-      elif level.id in [role.id for role in member_roles]:
-          #remove current role
-        cur_role = get(member.guild.roles, id=level.id)
-        await member.remove_roles(cur_role)
-    self.user_utils.update_user(user)
+    # Check time is more than end of last rank
+    if semester_time >= levels[-1].end:
+      return
+    else:
+      for level in levels:
+        #Get Current Time Level
+        if semester_time >= level.mark and semester_time < level.end:
+          if level.id in [role.id for role in member_roles]:
+            pass
+          else:
+            user.current_level = level.order
+            print(f'ROLE_UPDATE: {member.name} role has been added:',level.name)
+            if user.highest_rank < level.order:
+              user.highest_rank = level.order
+            new_role = get(member.guild.roles, id=level.id)
+            await member.add_roles(new_role)
+          #====================================
+        elif level.id in [role.id for role in member_roles]:
+            #remove current role
+          cur_role = get(member.guild.roles, id=level.id)
+          await member.remove_roles(cur_role)
+      self.user_utils.update_user(user)
 
   def startLearning(self, member):
     user = self.user_utils.get_user_by_id(member.id)
