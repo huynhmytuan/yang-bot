@@ -8,7 +8,7 @@ from models.user import User
 os.environ['TZ'] = 'Asia/Ho_Chi_Minh'
 time.tzset()
 user_utils = UserUtils()
-# Everyday at 00:05
+# Everyday at 00:02
 @aiocron.crontab('2 0 * * *', start=False)
 async def reset_day():
   users = user_utils.get_users()  
@@ -18,7 +18,7 @@ async def reset_day():
         user.day_learning = 0
     user_utils.upload_users(users)
     print(f"\n'=============Daily reset!============='")        
-# Weekly at 00:06 on monday of week
+# Weekly at 00:04 on monday of week
 @aiocron.crontab('4 0 * * MON', start=False)
 async def reset_week():
   users = user_utils.get_users()
@@ -32,7 +32,7 @@ async def reset_week():
 
 
 # Monthly at 00:10 on day 1 of month
-@aiocron.crontab('0 6 0 1 * *', start=False)
+@aiocron.crontab('0 0 1 * *', start=False)
 async def reset_month():
   users = user_utils.get_users()  
   if users:
