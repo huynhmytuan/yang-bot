@@ -196,8 +196,8 @@ class leveling(commands.Cog):
       # print("Role Updating...")
       if user.semester_learning != 0:
         for member in members:
-          member_roles = member.roles
           if member.id == user.user_id:
+            member_roles = member.roles
             # learn_time = user['learning_time']
             semester_time = user.semester_learning
             for i in range(len(levels)):
