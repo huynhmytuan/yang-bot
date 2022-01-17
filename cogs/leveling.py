@@ -70,14 +70,16 @@ class leveling(commands.Cog):
       study_role = get(member.guild.roles, id=STUDY_ROLE_ID)
       await member.add_roles(study_role)
     else:
-      pass
+      return
+
   async def remove_study_role(self, member):
     member_roles = member.roles
     if STUDY_ROLE_ID in [role.id for role in member_roles]:
       study_role = get(member.guild.roles, id=STUDY_ROLE_ID)
       await member.remove_roles(study_role)
     else:
-      pass
+      return
+
   async def add_role(self, member):
     levels = []
     member_roles = member.roles
@@ -123,7 +125,7 @@ class leveling(commands.Cog):
     user = self.user_utils.get_user_by_id(member.id)
     if member.id == user.user_id:
       if user.join_time == 0:
-        return 
+        return
       #calculate section learn time:
       now = time.time()
       learn_time = (now - user.join_time) / 3600
@@ -200,11 +202,14 @@ class leveling(commands.Cog):
             member_roles = member.roles
             # learn_time = user['learning_time']
             semester_time = user.semester_learning
+            # Check time is more than end of last rank
+            if semester_time >= levels[-1].end:
+              continue
             for i in range(len(levels)):
               #Get Current Time Level
               if semester_time >= levels[i].mark and semester_time < levels[i].end:
                 if levels[i].id in [role.id for role in member_roles]:
-                  pass
+                  continue
                   # return
                 else:
                   new_role = get(member.guild.roles, id=levels[i].id)
@@ -218,7 +223,7 @@ class leveling(commands.Cog):
                 #remove current role
                 cur_role = get(member.guild.roles, id=levels[i].id)
                 await member.remove_roles(cur_role)
-        #Save datebase
+        #Save to database
         self.user_utils.update_user(user)
     await ctx.send('Đã cập nhật xong.')
             
