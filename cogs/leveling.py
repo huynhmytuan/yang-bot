@@ -21,6 +21,12 @@ class leveling(commands.Cog):
 
   @commands.command(
       brief='Khởi tạo dữ liệu toàn bộ người dùng trong hệ thống.',
+      aliases=['hi'])
+  async def hello(self, ctx):
+    await ctx.send("hello")    
+
+  @commands.command(
+      brief='Khởi tạo dữ liệu toàn bộ người dùng trong hệ thống.',
       aliases=['cd'])
 
   async def create(self, ctx):
@@ -194,37 +200,48 @@ class leveling(commands.Cog):
     members = ctx.guild.members
     levels = self.level_utils.get_levels()
     users = self.user_utils.get_users()
+    # Duyet danh sach user trong database
     for user in users:
-      # print("Role Updating...")
-      if user.semester_learning != 0:
-        for member in members:
-          if member.id == user.user_id:
-            member_roles = member.roles
-            # learn_time = user['learning_time']
-            semester_time = user.semester_learning
-            # Check time is more than end of last rank
-            if semester_time >= levels[-1].end:
-              continue
-            for i in range(len(levels)):
-              #Get Current Time Level
-              if semester_time >= levels[i].mark and semester_time < levels[i].end:
-                if levels[i].id in [role.id for role in member_roles]:
-                  continue
-                  # return
-                else:
-                  new_role = get(member.guild.roles, id=levels[i].id)
-                  await member.add_roles(new_role)
-                  user.current_level = levels[i].order
-                  #=====High Rank=======
-                  if user.highest_rank < levels[i].order:
-                    user.highest_rank = levels[i].order
-                  #=======================
-              elif levels[i].id in [role.id for role in member_roles]:
-                #remove current role
-                cur_role = get(member.guild.roles, id=levels[i].id)
-                await member.remove_roles(cur_role)
-        #Save to database
-        self.user_utils.update_user(user)
+      semester_time = user.semester_learning
+      if semester_time != 0:
+        isEdited = False
+        #Lay ra member
+        for mem in members:
+          if mem.id == user.user_id:
+            member = mem
+            break
+        #Get All Member roles 
+        member_roles = member.roles
+        if semester_time >= levels[-1].end and levels[-1].id not in [role.id for role in member_roles]:
+          #=====High Rank=======
+          new_role = get(member.guild.roles, id=levels[i].id)
+          await member.add_roles(new_role)
+          user.current_level = levels[i].order
+          #=====High Rank=======
+          if user.highest_rank != levels[i].order:
+            user.highest_rank = levels[i].order
+            self.user_utils.update_user(user)
+            continue
+        else:
+          #Duyet danh sach level
+          for i in range(len(levels)):
+            if semester_time >= levels[i].mark and semester_time < levels[i].end:
+              if levels[i].id not in [role.id for role in member_roles]:
+                #=====High Rank=======
+                new_role = get(member.guild.roles, id=levels[i].id)
+                await member.add_roles(new_role)
+                user.current_level = levels[i].order
+                #=====High Rank=======
+                if user.highest_rank != levels[i].order:
+                  user.highest_rank = levels[i].order
+                  isEdited = True
+            elif levels[i].id in [role.id for role in member_roles]:
+              #remove current role
+              cur_role = get(member.guild.roles, id=levels[i].id)
+              await member.remove_roles(cur_role)
+          if isEdited:
+            #Save to database
+            self.user_utils.update_user(user)
     await ctx.send('Đã cập nhật xong.')
             
             
