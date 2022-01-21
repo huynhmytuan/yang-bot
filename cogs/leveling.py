@@ -212,16 +212,17 @@ class leveling(commands.Cog):
             break
         #Get All Member roles 
         member_roles = member.roles
-        if semester_time >= levels[-1].end and levels[-1].id not in [role.id for role in member_roles]:
-          #=====High Rank=======
-          new_role = get(member.guild.roles, id=levels[i].id)
-          await member.add_roles(new_role)
-          user.current_level = levels[i].order
-          #=====High Rank=======
-          if user.highest_rank != levels[i].order:
-            user.highest_rank = levels[i].order
-            self.user_utils.update_user(user)
-            continue
+        if semester_time >= levels[-1].end:
+          if levels[-1].id not in [role.id for role in member_roles]:
+            #=====High Rank=======
+            new_role = get(member.guild.roles, id=levels[i].id)
+            await member.add_roles(new_role)
+            user.current_level = levels[i].order
+            #=====High Rank=======
+            if user.highest_rank != levels[i].order:
+              user.highest_rank = levels[i].order
+              self.user_utils.update_user(user)
+              continue
         else:
           #Duyet danh sach level
           for i in range(len(levels)):
